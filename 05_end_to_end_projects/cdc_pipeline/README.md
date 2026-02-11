@@ -6,11 +6,15 @@ This project demonstrates a production-grade Change Data Capture (CDC) pipeline 
 
 ## Architecture Overview
 
-- Source OLTP database emits inserts, updates, and deletes
-- AWS DMS captures full load and ongoing CDC events
-- CDC records are written to Amazon S3 (raw zone)
-- Apache Spark applies merge logic to reconstruct the latest state
-- Curated datasets are published to Snowflake / Amazon Redshift for analytics and ML
+- Source OLTP database emits inserts, updates, and deletes  
+- AWS DMS captures full load and ongoing CDC events  
+- CDC records are written to Amazon S3 (raw zone)  
+- Apache Spark applies merge logic to reconstruct the latest state  
+- Curated datasets are published to Snowflake / Amazon Redshift for analytics and ML  
+
+### Architecture Diagram
+
+![CDC Pipeline Architecture](../../04_cloud_aws/architecture_diagrams/cdc_pipeline_architecture.png)
 
 ---
 
@@ -36,9 +40,6 @@ This project demonstrates a production-grade Change Data Capture (CDC) pipeline 
 This approach ensures deterministic outputs and correctness even with out-of-order or reprocessed events.
 
 ---
-#### Architecture Diagram
-
-![CDC Pipeline Architecture](04_cloud_aws/architecture_diagrams/cdc_pipeline_architecture.png)
 
 ## Use Cases
 
