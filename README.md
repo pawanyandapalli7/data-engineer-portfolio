@@ -1,19 +1,19 @@
 # Data Engineer Portfolio
 
-End-to-end data engineering projects showcasing scalable data pipelines, architecture diagrams, and analytics-ready datasets using AWS, Apache Spark, Python, and SQL.
+End-to-end data engineering projects showcasing scalable data pipelines, cloud-native architectures, and analytics-ready datasets using AWS, Apache Spark, Python, and SQL.
 
 ---
 
 ## 👋 About Me
 
-Hi! I'm Pawan Yandapalli — a Data Engineer with strong hands-on experience building data platforms and pipelines on AWS using Python, SQL, and Spark. I specialize in transforming raw data into structured, high-quality datasets optimized for analytics and machine learning use cases.
+Hi! I'm **Pawan Yandapalli**, a Data Engineer with strong hands-on experience building data platforms and pipelines on AWS using Python, SQL, and Spark. I specialize in transforming raw data into structured, high-quality datasets optimized for analytics and machine learning use cases.
 
 My focus areas include:
 - Batch and CDC ingestion pipelines  
 - Data modeling and data quality validation  
 - Cloud-native architectures (AWS)  
 - Analytics and ML-ready data  
-- Documentation with architecture diagrams and best practices
+- Clear documentation with architecture diagrams and best practices  
 
 ---
 
@@ -37,9 +37,9 @@ My focus areas include:
 - Built an end-to-end data pipeline to ingest, process, and curate healthcare insurance claims data  
 - Designed CDC (Change Data Capture) ingestion and batch workflows  
 - Implemented data quality checks and late-arriving data handling  
-- Produced analytics-ready datasets used for BI and ML pipelines
+- Produced analytics-ready datasets used for BI and ML pipelines  
 
-**Tech Stack:** AWS S3, AWS Glue, PySpark, Snowflake, Airflow
+**Tech Stack:** AWS S3, AWS Glue, PySpark, Snowflake, Airflow  
 
 #### Architecture Diagram
 
@@ -51,19 +51,23 @@ My focus areas include:
 
 - Designed a CDC pipeline capturing incremental changes from a transactional database  
 - Ensured idempotent loads, deduplication, and historical record preservation  
-- Optimized Spark jobs to scale with large data volumes
+- Optimized Spark jobs to scale with large data volumes  
 
 **Tech Stack:** PostgreSQL, AWS DMS, S3, PySpark, Snowflake
 
 ---
 
-### ⚡ Event-Driven Data Processing
+### ⚡ Event-Driven Data Processing Pipeline (AWS)
 
-- Built an event-driven pipeline triggered by object uploads to S3  
-- Automated near real-time transformation jobs using Lambda and Glue  
-- Enhanced system responsiveness and reduced latency
+- Built an event-driven pipeline triggered by object uploads to Amazon S3  
+- Automated near real-time transformation jobs using AWS Lambda and AWS Glue  
+- Enhanced system responsiveness and reduced end-to-end latency  
 
-**Tech Stack:** AWS S3, EventBridge, Lambda, Glue
+**Tech Stack:** AWS S3, EventBridge, Lambda, Glue  
+
+#### Architecture Diagram
+
+![Event-Driven Data Processing Architecture](04_cloud_aws/architecture_diagrams/event_driven_data_processing_architecture.png)
 
 ---
 
