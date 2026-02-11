@@ -99,9 +99,8 @@ data-engineer-portfolio/
 ├── 05_end_to_end_projects/  # Production-style CDC and batch pipelines
 ├── 06_devops/               # Docker, CI/CD, and Infrastructure as Code (Terraform)
 └── datasets/                # Sample datasets used across projects
-
----
-## 📫 Contact
+```
+### 📫 Contact
 
 LinkedIn: https://www.linkedin.com/in/pawanyandapalli/
 
