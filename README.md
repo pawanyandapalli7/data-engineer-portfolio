@@ -68,14 +68,16 @@ My focus areas include:
 ---
 
 ## 📂 Repository Structure
+## 📂 Repository Structure
 
+```text
 data-engineer-portfolio/
-|
+│
 ├── 01_sql/
 ├── 02_python/
 ├── 03_spark_pyspark/
 ├── 04_cloud_aws/
-│ └── architecture_diagrams/
+│   └── architecture_diagrams/
 ├── 05_end_to_end_projects/
 ├── 06_devops/
 └── datasets/
