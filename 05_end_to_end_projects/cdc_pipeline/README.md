@@ -36,6 +36,9 @@ This project demonstrates a production-grade Change Data Capture (CDC) pipeline 
 This approach ensures deterministic outputs and correctness even with out-of-order or reprocessed events.
 
 ---
+#### Architecture Diagram
+
+![CDC Pipeline Architecture](04_cloud_aws/architecture_diagrams/cdc_pipeline_architecture.png)
 
 ## Use Cases
 
