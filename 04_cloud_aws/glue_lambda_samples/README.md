@@ -16,3 +16,12 @@ This module demonstrates an event-driven data processing pattern on AWS using Gl
 - Healthcare claims ingestion
 - Event-driven ETL pipelines
 - Analytics and ML-ready data preparation
+
+## Why This Matters
+
+This pattern is commonly used in production data platforms to:
+- Enable near real-time data processing
+- Reduce operational overhead with serverless services
+- Ensure scalable and cost-efficient ETL pipelines
+
+This design is suitable for healthcare, finance, and event-driven analytics workloads.
