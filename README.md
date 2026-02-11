@@ -88,7 +88,7 @@ My core focus areas include:
 This repository is organized to mirror real-world data engineering workflows,
 from analytics development to production pipelines and platform infrastructure.
 
-```text
+``text
 data-engineer-portfolio/
 │
 ├── 01_sql/                  # Advanced SQL analytics and window function use cases
@@ -99,3 +99,10 @@ data-engineer-portfolio/
 ├── 05_end_to_end_projects/  # Production-style CDC and batch pipelines
 ├── 06_devops/               # Docker, CI/CD, and Infrastructure as Code (Terraform)
 └── datasets/                # Sample datasets used across projects
+
+---
+## 📫 Contact
+
+LinkedIn: https://www.linkedin.com/in/pawanyandapalli/
+
+Email: pawanyandapalli7@gmail.com
