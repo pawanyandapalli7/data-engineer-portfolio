@@ -1,4 +1,6 @@
--- Deduplicate records (latest per claim)
+-- Purpose:
+-- Deduplicate records by retaining the latest version per claim.
+-- Commonly used in CDC pipelines and snapshot generation.
 SELECT *
 FROM (
     SELECT *,
@@ -10,7 +12,9 @@ FROM (
 ) t
 WHERE rn = 1;
 
--- Rank claims by amount per member
+-- Purpose:
+-- Rank claims by amount within each member.
+-- Used for cost analysis and outlier detection.
 SELECT
     member_id,
     claim_id,
@@ -21,7 +25,9 @@ SELECT
     ) AS amount_rank
 FROM claims;
 
--- Running total of claims per member
+-- Purpose:
+-- Compute cumulative claim spend over time per member.
+-- Commonly used for trend analysis and reporting.
 SELECT
     member_id,
     claim_date,
@@ -33,7 +39,9 @@ SELECT
     ) AS running_total
 FROM claims;
 
--- Compare current vs previous claim
+-- Purpose:
+-- Compare current claim amounts with previous claims.
+-- Used to analyze changes and detect abnormal increases.
 SELECT
     member_id,
     claim_date,
