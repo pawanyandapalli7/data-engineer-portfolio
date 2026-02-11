@@ -19,3 +19,13 @@ This project demonstrates a production-grade Change Data Capture (CDC) pipeline 
 - Insurance claims updates
 - Financial transactions
 - Customer master data
+
+### 🔄 Change Data Capture (CDC) Pipeline
+
+- Built a production-grade CDC pipeline using AWS DMS and Apache Spark
+- Captured inserts, updates, and deletes from an OLTP source
+- Implemented idempotent merge logic with Spark window functions
+- Handled late-arriving events and delete propagation
+- Delivered analytics-ready snapshots for BI and ML use cases
+
+**Tech Stack:** PostgreSQL, AWS DMS, S3, PySpark, Snowflake, Redshift
