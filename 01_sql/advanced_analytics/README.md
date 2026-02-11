@@ -17,3 +17,11 @@ These patterns are widely used in:
 - Analytics reporting
 - Fraud detection
 - Financial and healthcare data platforms
+
+### 📊 Advanced SQL Analytics
+
+- Implemented advanced SQL using window functions and analytical patterns
+- Solved real-world deduplication, ranking, and trend analysis problems
+- Included interview-style SQL case scenarios
+
+➡️ See queries: `01_sql/advanced_analytics`
