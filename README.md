@@ -68,7 +68,6 @@ My focus areas include:
 ---
 
 ## 📂 Repository Structure
-## 📂 Repository Structure
 
 ```text
 data-engineer-portfolio/
