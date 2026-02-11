@@ -88,7 +88,7 @@ My core focus areas include:
 This repository is organized to mirror real-world data engineering workflows,
 from analytics development to production pipelines and platform infrastructure.
 
-``text
+```text
 data-engineer-portfolio/
 │
 ├── 01_sql/                  # Advanced SQL analytics and window function use cases
