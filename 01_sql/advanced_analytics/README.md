@@ -20,7 +20,7 @@ These patterns are widely used in:
 
 ### 📊 Advanced SQL Analytics
 
-- Implemented advanced SQL using window functions and analytical patterns
+- Implemented advanced SQL using window functions for deduplication, ranking, and time-based analytics
 - Solved real-world deduplication, ranking, and trend analysis problems
 - Included interview-style SQL case scenarios
 
