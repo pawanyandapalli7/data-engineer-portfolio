@@ -1,4 +1,6 @@
--- Find members with increasing claim amounts
+-- Purpose:
+-- Identify members whose claim amounts show an increasing pattern over time.
+-- Commonly used for trend analysis and anomaly detection in claims data.
 SELECT DISTINCT member_id
 FROM (
     SELECT
@@ -12,7 +14,9 @@ FROM (
 ) t
 WHERE claim_amount > prev_amount;
 
--- Detect potential fraud (spike detection)
+-- Purpose:
+-- Detect potential fraud or abnormal spikes by comparing individual claims
+-- against a member's historical average claim amount.
 SELECT *
 FROM (
     SELECT
