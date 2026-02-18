@@ -104,4 +104,4 @@ data-engineer-portfolio/
 
 LinkedIn: https://www.linkedin.com/in/pawanyandapalli/
 
-Email: pawanyandapalli7@gmail.com
+Email: pawanyandapalli9@gmail.com
