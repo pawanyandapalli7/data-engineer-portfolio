@@ -1,5 +1,12 @@
 # Data Engineer Portfolio
 
+![Build Status](https://github.com/pawanyandapalli7/data-engineer-portfolio/actions/workflows/ci.yml/badge.svg)
+![Stars](https://img.shields.io/github/stars/pawanyandapalli7/data-engineer-portfolio)
+![Forks](https://img.shields.io/github/forks/pawanyandapalli7/data-engineer-portfolio)
+![Issues](https://img.shields.io/github/issues/pawanyandapalli7/data-engineer-portfolio)
+![License](https://img.shields.io/github/license/pawanyandapalli7/data-engineer-portfolio)
+![Last Commit](https://img.shields.io/github/last-commit/pawanyandapalli7/data-engineer-portfolio)
+
 End-to-end data engineering projects demonstrating scalable data pipelines,
 cloud-native architectures, and analytics-ready datasets built using
 AWS, Apache Spark, Python, and SQL.
