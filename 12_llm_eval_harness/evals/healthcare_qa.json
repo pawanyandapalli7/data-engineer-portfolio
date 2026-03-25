@@ -1,0 +1,44 @@
+[
+  {
+    "id": "hc_001",
+    "question": "What is the recommended treatment for Type 2 diabetes according to the policy?",
+    "context": "Per clinical policy CP-2024-DM, first-line treatment for Type 2 diabetes is metformin at 500mg twice daily with meals, combined with lifestyle modification including 150 minutes of moderate exercise per week and a diet with less than 45% carbohydrates. Insulin therapy is initiated when HbA1c remains above 9% after 3 months of first-line treatment.",
+    "expected_answer": "First-line treatment is metformin 500mg twice daily plus lifestyle changes (150 min/week exercise, low-carb diet). Insulin is added if HbA1c stays above 9% after 3 months.",
+    "tags": ["healthcare", "clinical-policy", "simple"]
+  },
+  {
+    "id": "hc_002",
+    "question": "Under what conditions is prior authorization required for MRI imaging?",
+    "context": "Prior authorization is required for MRI imaging in non-emergency settings when: (1) the patient has had a prior MRI in the same body region within 12 months, (2) the ordering provider is out-of-network, or (3) the procedure cost exceeds $2,500. Emergency MRI scans do not require prior authorization. Pre-certification should be submitted at least 48 hours before the scheduled procedure.",
+    "expected_answer": "Prior auth required when: same-region MRI within 12 months, out-of-network provider, or cost over $2,500. Emergency MRIs are exempt. Submit 48 hours in advance.",
+    "tags": ["healthcare", "authorization", "multi-condition"]
+  },
+  {
+    "id": "hc_003",
+    "question": "What is the deductible for out-of-network emergency care?",
+    "context": "For in-network services, the annual deductible is $1,500 for individuals and $3,000 for families. Preventive care services are covered at 100% with no deductible. Specialist visits require a $40 copay after the deductible is met.",
+    "expected_answer": "The context does not specify an out-of-network emergency care deductible.",
+    "tags": ["healthcare", "benefits", "unanswerable"]
+  },
+  {
+    "id": "hc_004",
+    "question": "How long does a claim review typically take?",
+    "context": "Standard claim reviews are completed within 30 business days of receipt. Expedited reviews for urgent medical situations are completed within 72 hours. If additional information is needed from the provider, the review clock is paused until the information is received. Members can check claim status via the member portal or by calling member services.",
+    "expected_answer": "Standard reviews take 30 business days. Urgent/expedited reviews take 72 hours. Clock pauses if additional provider info is needed.",
+    "tags": ["healthcare", "claims", "simple"]
+  },
+  {
+    "id": "hc_005",
+    "question": "Can a member appeal a denied claim, and what is the process?",
+    "context": "Members have the right to appeal any adverse benefit determination within 180 days of receiving the denial notice. The first-level appeal must be submitted in writing to the Appeals Department and includes a review by a different clinical reviewer than the one who made the original determination. A decision is rendered within 60 days. If the first-level appeal is denied, members may request an external independent review.",
+    "expected_answer": "Yes. Submit written appeal within 180 days. First-level reviewed by new clinical reviewer within 60 days. Denied? Request external independent review.",
+    "tags": ["healthcare", "appeals", "multi-step"]
+  },
+  {
+    "id": "hc_006",
+    "question": "What mental health benefits are covered under the plan?",
+    "context": "Mental health and substance use disorder benefits are covered at parity with medical-surgical benefits. Inpatient psychiatric care requires prior authorization and is limited to medically necessary admissions. Outpatient therapy sessions have a $30 copay with no annual visit limit. Telehealth mental health visits are covered at the same cost-sharing as in-person visits.",
+    "expected_answer": "Mental health covered at parity with medical. Inpatient requires prior auth. Outpatient therapy $30 copay, unlimited visits. Telehealth at same cost as in-person.",
+    "tags": ["healthcare", "mental-health", "parity"]
+  }
+]
