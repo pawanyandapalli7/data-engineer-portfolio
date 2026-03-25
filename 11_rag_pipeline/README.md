@@ -133,5 +133,5 @@ curl -X POST http://localhost:8000/query \
 ---
 
 ## Stack
-
+ 
 `Python 3.11` · `OpenAI API` · `Pinecone` · `FastAPI` · `Docker` · `pytest`
