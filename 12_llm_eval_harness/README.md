@@ -7,7 +7,7 @@ Built to answer: *"Is this model good enough to deploy in production?"*
 This is the exact type of eval harness OpenAI's Forward Deployed Engineering team
 builds when a customer deployment isn't performing well enough. Their eval work
 on a voice customer directly influenced the OpenAI Realtime API.
-
+ 
 ---
 
 ## What It Measures
