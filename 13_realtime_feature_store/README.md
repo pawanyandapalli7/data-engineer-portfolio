@@ -5,7 +5,7 @@ offline batch features via Snowflake + dbt for model training.
 
 Built around the fraud detection use case: event arrives → features computed in
 real-time → ML model queries Redis → fraud decision made in <50ms.
-
+ 
 ---
 
 ## Architecture
