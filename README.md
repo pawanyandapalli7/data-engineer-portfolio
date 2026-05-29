@@ -14,7 +14,7 @@ I'm a Data & AI Engineer who builds production-grade data pipelines *and* LLM-po
 
 My recent focus: **end-to-end AI systems** — from document ingestion and vector search to LLM evaluation harnesses that answer *"is this model safe to deploy?"*
 
-📧 pawanyandapalli9@gmail.com · 🔗 [LinkedIn](https://www.linkedin.com/in/pawanyandapalli/) · 🐙 [GitHub](https://github.com/pawanyandapalli7)
+📧 pawanyandapalli7@gmail.com · 🔗 [LinkedIn](https://www.linkedin.com/in/pawanyandapalli/) · 🐙 [GitHub](https://github.com/pawanyandapalli7)
 
 ---
 
