@@ -3,7 +3,7 @@
 [![CI](https://github.com/pawanyandapalli7/data-engineer-portfolio/actions/workflows/ci.yml/badge.svg)](https://github.com/pawanyandapalli7/data-engineer-portfolio/actions)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 [![LinkedIn](https://img.shields.io/badge/LinkedIn-pawanyandapalli-blue)](https://www.linkedin.com/in/pawanyandapalli/)
-[![Portfolio](https://img.shields.io/badge/Portfolio-Live-brightgreen)](https://pawan-portfolio-lime.vercel.app/)
+[![Portfolio](https://img.shields.io/badge/Portfolio-Live-brightgreen)](https://pawanyandapalli.com)
 
 **Python · PySpark · Kafka · Spark · Snowflake · AWS · dbt · Databricks · Airflow**
 
@@ -15,7 +15,7 @@ I'm a Data Engineer with 5+ years building production-grade data pipelines on AW
 
 Lately I've been extending into AI infrastructure: RAG pipelines, LLM evaluation, and real-time feature stores. These aren't production deployments — they're how I'm learning the AI layer by building it from the ground up.
 
-📧 pawanyandapalli9@gmail.com · 🔗 [LinkedIn](https://www.linkedin.com/in/pawanyandapalli/) · 🌐 [Live Portfolio](https://pawan-portfolio-lime.vercel.app/)
+📧 pawanyandapalli9@gmail.com · 🔗 [LinkedIn](https://www.linkedin.com/in/pawanyandapalli/) · 🌐 [pawanyandapalli.com](https://pawanyandapalli.com)
 
 ---
 
@@ -133,7 +133,7 @@ data-engineer-portfolio/
 ├── 02_python/                     # Reusable processing utilities + tests
 ├── 03_spark_pyspark/              # Spark transformations, optimization
 ├── 04_cloud_aws/                  # AWS Glue/Lambda samples, architecture diagrams
-│   └── aws_to_azure_mapping.md   # AWS ↔ Azure service mapping
+│   └── aws_to_azure_mapping.md    # AWS ↔ Azure service mapping
 ├── 05_end_to_end_projects/        # CDC pipeline, healthcare claims platform ★
 ├── 06_devops/                     # Docker, Terraform, CI/CD
 ├── 07_data_quality_framework/     # Schema validation, business rules, reconciliation ★
@@ -152,14 +152,14 @@ data-engineer-portfolio/
 ## Certifications
 
 **Platform Architecture**
-- 🏆 AWS Databricks Platform Architect — Databricks
-- 🏆 Azure Databricks Platform Architect — Databricks
+- 🏆 AWS Databricks Platform Architect — Databricks · Aug 2025 · *expires Aug 2027*
+- 🏆 Azure Databricks Platform Architect — Databricks · Sep 2025
 
 **Data Engineering**
-- ✅ dbt Fundamentals — dbt Labs
+- ✅ dbt Fundamentals — dbt Labs · Oct 2025
 
-**AI / LLM (in progress)**
-- ✅ Building RAG Agents with LLMs — NVIDIA DLI
-- ✅ Generative AI with Diffusion Models — NVIDIA DLI
+**AI / LLM**
+- ✅ Building RAG Agents with LLMs — NVIDIA DLI · 2024
+- ✅ Generative AI with Diffusion Models — NVIDIA DLI · 2024
 - ✅ LangChain for LLM Application Development — DeepLearning.AI · 2024
 - ✅ Building Systems with the ChatGPT API — DeepLearning.AI · 2024
