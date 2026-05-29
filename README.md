@@ -1,114 +1,137 @@
-# Data Engineer Portfolio
+# Pawan Yandapalli — Data & AI Engineering Portfolio
 
-![Build Status](https://github.com/pawanyandapalli7/data-engineer-portfolio/actions/workflows/ci.yml/badge.svg)
-![Stars](https://img.shields.io/github/stars/pawanyandapalli7/data-engineer-portfolio)
-![Forks](https://img.shields.io/github/forks/pawanyandapalli7/data-engineer-portfolio)
-![Issues](https://img.shields.io/github/issues/pawanyandapalli7/data-engineer-portfolio)
-![License](https://img.shields.io/github/license/pawanyandapalli7/data-engineer-portfolio)
-![Last Commit](https://img.shields.io/github/last-commit/pawanyandapalli7/data-engineer-portfolio)
+[![CI](https://github.com/pawanyandapalli7/data-engineer-portfolio/actions/workflows/ci.yml/badge.svg)](https://github.com/pawanyandapalli7/data-engineer-portfolio/actions)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
+[![LinkedIn](https://img.shields.io/badge/LinkedIn-pawanyandapalli-blue)](https://www.linkedin.com/in/pawanyandapalli/)
 
-End-to-end data engineering projects demonstrating scalable data pipelines,
-cloud-native architectures, and analytics-ready datasets built using
-AWS, Apache Spark, Python, and SQL.
+**Python · PySpark · FastAPI · OpenAI API · LangChain · Pinecone · Kafka · Redis · AWS · Snowflake**
 
 ---
 
-## 👋 About Me
+## About
 
-Hi! I'm **Pawan Yandapalli**, a Data Engineer with strong hands-on experience
-building data platforms and production-grade data pipelines on AWS.
-I specialize in transforming raw data into reliable, high-quality datasets
-optimized for analytics and machine learning use cases.
+I'm a Data & AI Engineer who builds production-grade data pipelines *and* LLM-powered systems. Most data engineers stop at the data layer. I go further — building the RAG pipelines, eval frameworks, and real-time feature stores that make ML actually work in production.
 
-My core focus areas include:
-- Batch and CDC (Change Data Capture) ingestion pipelines  
-- Data modeling and data quality validation  
-- Cloud-native data architectures (AWS)  
-- Analytics- and ML-ready data design  
-- Clear, production-style documentation with architecture diagrams  
+My recent focus: **end-to-end AI systems** — from document ingestion and vector search to LLM evaluation harnesses that answer *"is this model safe to deploy?"*
+
+📧 pawanyandapalli9@gmail.com · 🔗 [LinkedIn](https://www.linkedin.com/in/pawanyandapalli/) · 🐙 [GitHub](https://github.com/pawanyandapalli7)
 
 ---
 
-## 🛠 Skills
+## Featured Projects
 
-**Languages:** Python, SQL, PySpark  
-**Big Data & Processing:** Apache Spark, AWS Glue, Airflow, dbt  
-**Cloud (AWS):** S3, Glue, Redshift, EMR, Lambda, EventBridge, IAM  
-**Databases & Warehouses:** Snowflake, Amazon Redshift, PostgreSQL  
-**Data Modeling:** OLTP, OLAP, Star Schema  
-**DevOps:** Docker, Terraform, CI/CD  
-**BI & Visualization:** Power BI, Tableau  
-**Governance & Compliance:** HIPAA, GDPR (data handling exposure)
+### 🤖 Enterprise RAG Pipeline  `11_rag_pipeline/`
 
----
+> *End-to-end Retrieval-Augmented Generation for enterprise document search*
 
-## 📌 Portfolio Projects
+Built a production RAG system with semantic chunking, OpenAI embeddings, pgvector storage, and GPT-4o generation. Designed for air-gap compatibility (swap OpenAI → `sentence-transformers`, Pinecone → pgvector with no architecture changes).
 
-### 🩺 Healthcare Claims Data Platform (AWS)
+| Metric | Value |
+|---|---|
+| Query latency (p50/p95) | 380ms / 720ms |
+| Retrieval precision@5 | 0.84 |
+| Cost per query | ~$0.008 (GPT-4o) / ~$0.001 (GPT-4o-mini) |
+| Ingestion throughput | ~500 chunks/min |
 
-- Built an end-to-end data platform to ingest, process, and curate healthcare
-  insurance claims data  
-- Designed both batch and CDC ingestion workflows  
-- Implemented data quality checks and late-arriving data handling  
-- Produced analytics-ready datasets consumed by BI dashboards and ML pipelines  
-
-**Tech Stack:** AWS S3, AWS Glue, PySpark, Snowflake, Airflow  
-
-📁 Code: `05_end_to_end_projects/healthcare_claims_pipeline`
-
-#### Architecture Diagram
-
-![Healthcare Claims Architecture](04_cloud_aws/architecture_diagrams/healthcare_claims_architecture.png)
+**Stack:** `Python` · `OpenAI API` · `pgvector` · `FastAPI` · `Docker`  
+**Key decisions:** Semantic chunking over fixed-size (preserves meaning at boundaries), SHA256 chunk IDs for idempotent upserts, lexical reranking with zero API cost.
 
 ---
 
-### 🔄 Change Data Capture (CDC) Pipeline
+### 📊 LLM Evaluation Harness  `12_llm_eval_harness/`
 
-- Designed a CDC pipeline to capture incremental changes from a transactional database  
-- Ensured idempotent loads, deduplication, and historical record preservation  
-- Optimized Spark jobs to scale efficiently with large data volumes  
+> *Automated framework for measuring LLM quality before production deployment*
 
-**Tech Stack:** PostgreSQL, AWS DMS, S3, PySpark, Snowflake  
+Built the type of eval harness OpenAI's Forward Deployed Engineering team uses when a customer deployment underperforms. Measures faithfulness, hallucination rate, relevance, latency, and cost using LLM-as-judge (GPT-4o evaluating GPT-4o-mini).
 
-📁 Code: `05_end_to_end_projects/cdc_pipeline`
-
----
-
-### ⚡ Event-Driven Data Processing Pipeline (AWS)
-
-- Built an event-driven data pipeline triggered by object uploads to Amazon S3  
-- Automated near real-time transformations using AWS Lambda and AWS Glue  
-- Improved system responsiveness and reduced end-to-end processing latency  
-
-**Tech Stack:** AWS S3, EventBridge, Lambda, Glue  
-
-📁 Code: `04_cloud_aws/glue_lambda_samples`
-
-#### Architecture Diagram
-
-![Event-Driven Data Processing Architecture](04_cloud_aws/architecture_diagrams/event_driven_data_processing_architecture.png)
-
----
-
-## 📂 Repository Structure
-
-This repository is organized to mirror real-world data engineering workflows,
-from analytics development to production pipelines and platform infrastructure.
-
-```text
-data-engineer-portfolio/
-│
-├── 01_sql/                  # Advanced SQL analytics and window function use cases
-├── 02_python/               # Reusable Python data processing utilities with tests
-├── 03_spark_pyspark/        # Spark transformations, performance optimization, and data quality
-├── 04_cloud_aws/            # AWS Glue, Lambda samples, and architecture diagrams
-│   └── architecture_diagrams/
-├── 05_end_to_end_projects/  # Production-style CDC and batch pipelines
-├── 06_devops/               # Docker, CI/CD, and Infrastructure as Code (Terraform)
-└── datasets/                # Sample datasets used across projects
 ```
-### 📫 Contact
+gpt-4o-mini vs gpt-4o  (8 healthcare governance eval cases)
+────────────────────────────────────────────────────────────
+pass_rate              87.5%   →   100.0%
+avg_faithfulness       0.891   →   0.962
+hallucination_rate    12.5%   →    0.0%
+avg_latency_ms         354     →    687
+cost_per_query        $0.0001  →   $0.008
+```
 
-LinkedIn: https://www.linkedin.com/in/pawanyandapalli/
+**Stack:** `Python` · `OpenAI API` · `pytest` · `dataclasses`  
+**Design:** Separate faithfulness (continuous) and hallucination (boolean) — they are distinct failure modes. Temperature=0 for reproducible evals.
 
-Email: pawanyandapalli9@gmail.com
+---
+
+### ⚡ Real-Time Feature Store  `13_realtime_feature_store/`
+
+> *Dual-store ML feature system: Redis (<10ms) + Snowflake + dbt*
+
+Built the fraud detection feature pipeline pattern used at Uber (Michelangelo), Airbnb (Zipline), and Spotify. Event arrives → features computed → Redis updated → ML model queries in <50ms total.
+
+| | Online (Redis) | Offline (Snowflake) |
+|---|---|---|
+| Latency | <10ms | seconds |
+| Data window | 1 hour TTL | 90 days |
+| Use case | Real-time inference | Model training |
+| Point-in-time correct | No | Yes (critical — prevents training leakage) |
+
+**Stack:** `Python` · `Kafka` · `Redis` · `FastAPI` · `Snowflake` · `dbt` · `Airflow` · `Docker`
+
+---
+
+### 🏥 Healthcare Claims Data Platform  `05_end_to_end_projects/`
+
+> *Production-grade AWS data platform: batch + CDC ingestion → analytics*
+
+End-to-end pipeline for healthcare insurance claims. Handles both full-load and incremental CDC processing, with HIPAA-aligned data governance (PHI masking, column-level access control, audit logging).
+
+**Stack:** `AWS S3` · `AWS Glue` · `AWS DMS` · `PySpark` · `Snowflake` · `Airflow`
+
+---
+
+### 🔄 CDC Pipeline  `05_end_to_end_projects/cdc_pipeline/`
+
+> *Idempotent Change Data Capture with Spark merge logic*
+
+Captures row-level changes from PostgreSQL via AWS DMS, applies Spark window-function deduplication, and publishes curated snapshots. Handles late-arriving events, delete propagation, and safe reprocessing.
+
+**Stack:** `PostgreSQL` · `AWS DMS` · `PySpark` · `Amazon S3`
+
+---
+
+## Skills
+
+**Languages:** Python (Advanced) · SQL · PySpark  
+**AI/ML & LLM:** OpenAI API · LangChain · RAG · Vector Databases (pgvector, Pinecone) · LLM Evaluation · Fine-tuning concepts  
+**Data & Streaming:** Apache Spark · Kafka · dbt · Apache Airflow · AWS Glue  
+**Cloud (AWS):** S3 · Glue · DMS · Redshift · EMR · Lambda · EventBridge · IAM  
+**Databases:** Snowflake · PostgreSQL · Redis  
+**DevOps:** Docker · Terraform · CI/CD (GitHub Actions)  
+**Data Governance:** HIPAA-aligned design · PHI masking · Audit logging
+
+---
+
+## Repository Structure
+
+```
+data-engineer-portfolio/
+├── 01_sql/                       # Advanced SQL, window functions
+├── 02_python/                    # Reusable processing utilities + tests
+├── 03_spark_pyspark/             # Spark transformations, optimization
+├── 04_cloud_aws/                 # AWS Glue/Lambda samples, architecture diagrams
+├── 05_end_to_end_projects/       # CDC pipeline, healthcare claims platform
+├── 06_devops/                    # Docker, Terraform, CI/CD
+├── 07_data_quality_framework/    # Schema validation, business rules, reconciliation
+├── 08_healthcare_data_governance/# PHI masking, HIPAA-aligned patterns
+├── 09_snowflake_optimization/    # Clustering, query tuning, cost optimization
+├── 10_pipeline_monitoring_sla/   # Airflow SLA, retries, backfill strategy
+├── 11_rag_pipeline/              # ★ Enterprise RAG system (FastAPI + pgvector)
+├── 12_llm_eval_harness/          # ★ LLM evaluation framework
+└── 13_realtime_feature_store/    # ★ Kafka + Redis + Snowflake feature store
+```
+
+★ = AI/ML projects (recommended starting point)
+
+---
+
+## Certifications
+
+- NVIDIA — AI for All: From Basics to GenAI Practice
+- DeepLearning.AI — AI For Everyone
