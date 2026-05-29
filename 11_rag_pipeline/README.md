@@ -1,8 +1,20 @@
 # 11 — Enterprise RAG Pipeline
 
-End-to-end Retrieval-Augmented Generation system for enterprise document search.
-Ingests documents → embeds → stores in vector DB → retrieves → generates answers via LLM.
-Built with the same patterns used when deploying AI on sensitive enterprise data.
+> End-to-end Retrieval-Augmented Generation for enterprise document search.  
+> Ingests documents → semantic chunking → embeddings → vector store → retrieval → cited answers via LLM.
+
+**Stack:** `Python 3.11` · `OpenAI API` · `pgvector` · `FastAPI` · `Docker` · `pytest`
+
+---
+
+## Why This Project Exists
+
+Most RAG tutorials show the happy path. This one is built for the questions that matter in production:
+
+- What happens when you re-ingest the same document? (Idempotent upserts via SHA256 chunk IDs)
+- How do you prevent hallucinations? (Grounded system prompt + temperature=0 + citation enforcement)
+- How do you keep it fully private? (pgvector in your VPC — zero data egress)
+- How do you evaluate it? (See `12_llm_eval_harness/` — the companion eval project)
 
 ---
 
@@ -13,19 +25,17 @@ Documents (PDF / TXT / MD)
         │
         ▼
 ┌───────────────────┐
-│   Chunking Layer  │  Semantic chunking (paragraph-boundary first)
-│                   │  + overlap for context continuity
+│   Chunking Layer  │  Semantic (paragraph-boundary) + overlap for context continuity
 └────────┬──────────┘
          │
          ▼
 ┌───────────────────┐
-│  Embedding Layer  │  OpenAI text-embedding-3-large (3072 dims)
-│                   │  Batched · rate-limit safe
+│  Embedding Layer  │  text-embedding-3-large (3072 dims) · Batched · rate-limit safe
 └────────┬──────────┘
          │
          ▼
 ┌───────────────────┐     ┌──────────────────────┐
-│  Pinecone Index   │◄────│  Idempotent Upsert   │
+│  pgvector Index   │◄────│  Idempotent Upsert   │
 │  (Vector Store)   │     │  SHA256 chunk IDs    │
 └────────┬──────────┘     └──────────────────────┘
          │
@@ -42,35 +52,34 @@ Documents (PDF / TXT / MD)
                  │
                  ▼
         ┌────────────────┐
-        │  GPT-4o        │  temperature=0 for determinism
-        │  generation    │  Source-cited answers only
+        │  GPT-4o        │  temperature=0 · Source-cited answers only
         └────────────────┘
 ```
 
 ---
 
-## Key Design Decisions
-
-| Decision | Choice | Why |
-|---|---|---|
-| **Chunking strategy** | Semantic (paragraph-boundary) | Domain docs have natural paragraph boundaries that align with meaning. Fixed-size breaks mid-sentence, losing context. |
-| **Embedding model** | `text-embedding-3-large` (3072d) | ~15% better retrieval vs `small` on domain-specific content. Cost: ~$0.00013 / 1K tokens. |
-| **Vector store** | Pinecone serverless | Managed, scales to billions of vectors, built-in namespaces for multi-tenant isolation. pgvector is a good alternative for <10M vectors. |
-| **Chunk overlap** | 64 tokens | Prevents context loss at chunk boundaries without inflating storage. |
-| **Reranking** | Lexical boost on top of vector score | Zero additional API calls. Production upgrade: Cohere Rerank or ms-marco cross-encoder for +15-20% precision. |
-| **Generation temperature** | 0 | Enterprise use cases require deterministic, auditable answers. |
-
----
-
-## Performance Benchmarks
+## Performance
 
 | Metric | Value |
 |---|---|
-| Ingestion throughput | ~500 chunks/min (API rate limited) |
 | Query latency (p50) | 380ms |
 | Query latency (p95) | 720ms |
 | Retrieval precision@5 | 0.84 |
+| Ingestion throughput | ~500 chunks/min |
 | Cost per query | ~$0.008 (GPT-4o) / ~$0.001 (GPT-4o-mini) |
+
+---
+
+## Key Design Decisions
+
+| Decision | Choice | Rationale |
+|---|---|---|
+| **Chunking** | Semantic (paragraph-boundary) | Fixed-size cuts mid-sentence. Semantic chunks preserve complete thoughts → better retrieval. |
+| **Embedding model** | `text-embedding-3-large` (3072d) | ~15% better retrieval vs `small` on domain-specific content. $0.00013/1K tokens. |
+| **Vector store** | pgvector (PostgreSQL) | Runs in your VPC. Zero data egress. No vendor lock-in. Swap to Pinecone by changing one config value. |
+| **Chunk overlap** | 64 tokens | Prevents context loss at chunk boundaries without inflating storage. |
+| **Reranking** | Lexical boost (zero API cost) | Good baseline at no cost. Production upgrade: Cohere Rerank for +15-20% precision. |
+| **Temperature** | 0 | Enterprise use cases require deterministic, auditable answers. |
 
 ---
 
@@ -79,15 +88,15 @@ Documents (PDF / TXT / MD)
 ```
 11_rag_pipeline/
 ├── src/
-│   ├── ingest.py        # Document chunking, embedding, upsert
-│   ├── retrieval.py     # Query embedding, ANN search, reranking, generation
-│   └── api.py           # FastAPI server (POST /ingest, POST /query)
+│   ├── ingest.py        # Chunking, embedding, upsert
+│   ├── query.py         # Retrieval, reranking, generation
+│   └── api.py           # FastAPI: POST /ingest, POST /query, GET /metrics
 ├── data/
 │   └── sample_docs/     # Sample enterprise governance documents
 ├── tests/
-│   └── test_ingest.py   # Unit tests (no API calls required)
+│   └── test_rag.py      # 12 unit tests — no API keys required
 ├── Dockerfile
-├── docker-compose.yml
+├── docker-compose.yml   # API + pgvector, one command to run
 └── requirements.txt
 ```
 
@@ -98,23 +107,19 @@ Documents (PDF / TXT / MD)
 ```bash
 # 1. Set API keys
 export OPENAI_API_KEY=sk-...
-export PINECONE_API_KEY=...
 
-# 2. Install dependencies
-pip install -r requirements.txt
+# 2. Start the stack (pgvector + API)
+docker-compose up -d
 
 # 3. Run tests (no API keys needed)
 pytest tests/ -v
 
-# 4. Start API server
-uvicorn src.api:app --reload
-
-# 5. Ingest sample documents
-curl -X POST http://localhost:8000/ingest \
+# 4. Ingest a document
+curl -X POST http://localhost:8000/ingest/text \
   -H "Content-Type: application/json" \
-  -d '{"directory": "data/sample_docs"}'
+  -d '{"text": "Your document text here.", "doc_id": "doc-001"}'
 
-# 6. Query
+# 5. Query
 curl -X POST http://localhost:8000/query \
   -H "Content-Type: application/json" \
   -d '{"question": "What are the data retention requirements for PHI?"}'
@@ -124,14 +129,16 @@ curl -X POST http://localhost:8000/query \
 
 ## Enterprise Extensions
 
-**Multi-tenant isolation**: Pass `metadata_filter={"tenant_id": "acme"}` to restrict retrieval to a specific customer's documents. Built into the Pinecone query layer — no data ever crosses tenant boundaries.
+**Multi-tenant isolation** — Pass `metadata_filter={"tenant_id": "acme"}` to restrict retrieval to a specific customer's documents. No data ever crosses tenant boundaries.
 
-**Private VPC deployment**: Replace Pinecone with `pgvector` on RDS for fully private deployment. Swap OpenAI for a self-hosted embedding model (e.g. `sentence-transformers`) for air-gap compatibility.
+**Air-gap / private deployment** — Swap OpenAI for `sentence-transformers` (self-hosted embedding) and keep pgvector on RDS. Zero external API calls.
 
-**Access control**: The metadata filter doubles as a row-level security mechanism — `{"department": "legal"}` ensures only legal department docs are searched, enforcing RBAC at the retrieval layer.
+**Row-level access control** — The metadata filter doubles as RBAC: `{"department": "legal"}` ensures only legal docs are retrieved at query time.
+
+**Scaling** — Swap pgvector for Pinecone serverless by changing `VectorStore` backend. Everything else — chunking, embedding, generation — stays unchanged.
 
 ---
 
-## Stack
- 
-`Python 3.11` · `OpenAI API` · `Pinecone` · `FastAPI` · `Docker` · `pytest`
+## Related
+
+`12_llm_eval_harness/` — Automated evaluation harness for measuring RAG quality (faithfulness, hallucination rate, precision) before production deployment.
