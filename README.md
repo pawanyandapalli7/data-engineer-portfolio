@@ -1,6 +1,5 @@
 # Pawan Yandapalli — Data Engineering Portfolio
 
-[![CI](https://github.com/pawanyandapalli7/data-engineer-portfolio/actions/workflows/ci.yml/badge.svg)](https://github.com/pawanyandapalli7/data-engineer-portfolio/actions)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 [![LinkedIn](https://img.shields.io/badge/LinkedIn-pawanyandapalli-blue)](https://www.linkedin.com/in/pawanyandapalli/)
 [![Portfolio](https://img.shields.io/badge/Portfolio-Live-brightgreen)](https://pawanyandapalli.com)
