@@ -15,7 +15,7 @@ I'm a Data Engineer with 5+ years building production-grade data pipelines on AW
 
 Lately I've been extending into AI infrastructure: RAG pipelines, LLM evaluation, and real-time feature stores. These aren't production deployments — they're how I'm learning the AI layer by building it from the ground up.
 
-📧 pawanyandapalli9@gmail.com · 🔗 [LinkedIn](https://www.linkedin.com/in/pawanyandapalli/) · 🌐 [pawanyandapalli.com](https://pawanyandapalli.com)
+📧 pawanyandapalli1@gmail.com · 🔗 [LinkedIn](https://www.linkedin.com/in/pawanyandapalli/) · 🌐 [pawanyandapalli.com](https://pawanyandapalli.com)
 
 ---
 
