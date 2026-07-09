@@ -1,3 +1,5 @@
+# Minimum versions below. For a fully reproducible install, use: pip install -r requirements-lock.txt
+
 openai>=1.30.0
 pytest>=8.2.0
 python-dotenv>=1.0.0

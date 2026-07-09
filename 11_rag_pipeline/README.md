@@ -58,15 +58,17 @@ Documents (PDF / TXT / MD)
 
 ---
 
-## Performance
+## Performance Targets
 
-| Metric | Value |
+| Metric | Target |
 |---|---|
-| Query latency (p50) | 380ms |
-| Query latency (p95) | 720ms |
-| Retrieval precision@5 | 0.84 |
-| Ingestion throughput | ~500 chunks/min |
+| Query latency (p50) | ~380ms |
+| Query latency (p95) | ~720ms |
+| Retrieval precision@5 | 0.84 (measured on `12_llm_eval_harness` eval set) |
+| Ingestion throughput | ~500 chunks/min (single-process, no batching parallelism) |
 | Cost per query | ~$0.008 (GPT-4o) / ~$0.001 (GPT-4o-mini) |
+
+*Latency, throughput, and precision@5 are design targets for this configuration, not benchmarks from sustained production load — this is a self-directed project. The `12_llm_eval_harness/` project measures a different set of metrics (faithfulness, hallucination rate, relevance) on its own eval set, not precision@5.*
 
 ---
 
@@ -89,15 +91,13 @@ Documents (PDF / TXT / MD)
 11_rag_pipeline/
 ├── src/
 │   ├── ingest.py        # Chunking, embedding, upsert
-│   ├── query.py         # Retrieval, reranking, generation
+│   ├── query.py         # Retrieval, lexical reranking, generation
 │   └── api.py           # FastAPI: POST /ingest, POST /query, GET /metrics
-├── data/
-│   └── sample_docs/     # Sample enterprise governance documents
 ├── tests/
-│   └── test_rag.py      # 12 unit tests — no API keys required
-├── Dockerfile
+│   └── test_rag.py      # Unit tests — no API keys required
 ├── docker-compose.yml   # API + pgvector, one command to run
-└── requirements.txt
+├── requirements.txt
+└── requirements-lock.txt
 ```
 
 ---

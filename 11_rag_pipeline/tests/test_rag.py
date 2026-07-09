@@ -181,3 +181,53 @@ class TestRAGIngestionPipeline:
 
         # Both should succeed and produce same chunk count
         assert r1["chunks"] == r2["chunks"]
+
+
+# ── Lexical Reranker Tests ────────────────────────────────────────────────────
+
+class TestLexicalRerank:
+
+    def test_reranks_by_term_overlap(self):
+        from src.query import Retriever
+
+        query = "HIPAA breach notification deadline"
+        candidates = [
+            {"chunk_id": "a", "similarity": 0.70, "text": "General privacy overview with no specific deadlines mentioned."},
+            {"chunk_id": "b", "similarity": 0.68, "text": "HIPAA breach notification must occur within 60 days of discovery."},
+        ]
+
+        result = Retriever._lexical_rerank(query, candidates, top_n=2)
+
+        assert result[0]["chunk_id"] == "b"  # higher lexical overlap should win despite lower raw similarity
+
+    def test_respects_top_n(self):
+        from src.query import Retriever
+
+        candidates = [
+            {"chunk_id": str(i), "similarity": 0.5, "text": "some generic text"} for i in range(10)
+        ]
+        result = Retriever._lexical_rerank("generic", candidates, top_n=3)
+
+        assert len(result) == 3
+
+    def test_empty_query_terms_falls_back_to_original_order(self):
+        from src.query import Retriever
+
+        candidates = [
+            {"chunk_id": "a", "similarity": 0.9, "text": "text one"},
+            {"chunk_id": "b", "similarity": 0.5, "text": "text two"},
+        ]
+        # Query with only short/stopword-like tokens that tokenize to nothing
+        result = Retriever._lexical_rerank("a to", candidates, top_n=2)
+
+        assert [c["chunk_id"] for c in result] == ["a", "b"]
+
+    def test_tokenize_strips_punctuation_and_short_tokens(self):
+        from src.query import Retriever
+
+        tokens = Retriever._tokenize("HIPAA's 60-day rule, Section 3.2!")
+        assert "hipaa" in tokens or "s" not in tokens  # punctuation split, no bare "s"
+        assert "60" not in tokens  # numeric tokens under length 3 dropped
+        assert "day" in tokens
+        assert "rule" in tokens
+        assert "section" in tokens

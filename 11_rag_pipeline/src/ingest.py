@@ -3,7 +3,7 @@ RAG Pipeline — Document Ingestion Layer
 Handles: chunking, embedding generation, vector store upsert
 """
 
-import os, time, hashlib, logging
+import os, time, hashlib, logging, re
 from pathlib import Path
 from dataclasses import dataclass, field
 
@@ -13,6 +13,20 @@ import psycopg2, psycopg2.extras
 from pgvector.psycopg2 import register_vector
 
 log = logging.getLogger(__name__)
+
+_SAFE_IDENTIFIER = re.compile(r"^[a-zA-Z_][a-zA-Z0-9_]*$")
+
+
+def _validate_identifier(name: str) -> str:
+    """
+    table_name is interpolated into DDL/DML below since psycopg2 can't
+    parameterize identifiers (only values). Whitelist-validate it here
+    so a misconfigured or malicious table_name can't be used for SQL
+    injection via CREATE TABLE / INSERT statements.
+    """
+    if not _SAFE_IDENTIFIER.match(name):
+        raise ValueError(f"Unsafe table name: {name!r}")
+    return name
 
 
 @dataclass
@@ -144,6 +158,7 @@ class VectorStore:
 
     def __init__(self, config: IngestConfig):
         self.config = config
+        _validate_identifier(config.table_name)
         self.conn = psycopg2.connect(config.db_conn_str)
         register_vector(self.conn)
         self._setup()

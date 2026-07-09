@@ -4,7 +4,7 @@
 [![LinkedIn](https://img.shields.io/badge/LinkedIn-pawanyandapalli-blue)](https://www.linkedin.com/in/pawanyandapalli/)
 [![Portfolio](https://img.shields.io/badge/Portfolio-Live-brightgreen)](https://pawanyandapalli.com)
 
-**Python · PySpark · Kafka · Spark · Snowflake · AWS · dbt · Databricks · Airflow**
+**Python · PySpark · Spark · Snowflake · AWS · dbt · Databricks · Airflow**
 
 ---
 
@@ -24,12 +24,12 @@ Lately I've been extending into AI infrastructure: RAG pipelines, LLM evaluation
 
 > *Production-grade AWS data platform: batch + CDC ingestion → analytics*
 
-End-to-end pipeline for healthcare insurance claims at TouchWorld. Dual batch + CDC ingestion, HIPAA-aligned governance (PHI masking, column-level access, audit logging), curated datasets serving 3 downstream ML teams.
+End-to-end pipeline for healthcare insurance claims at TouchWorld. Dual batch + CDC ingestion, HIPAA-aligned governance (PHI masking, column-level access, audit logging), curated datasets for downstream analytics.
 
-- **500K+ records/day** · Latency cut from **4h → 30min** · Zero HIPAA incidents across 24 months
-- Schema drift was root cause of silent contract failures — introduced version enforcement, zero incidents since
+- **500K+ records/day** · Latency cut from **4h → 30min**
+- Schema drift was root cause of silent contract failures — introduced version enforcement and automated contract validation
 
-**Stack:** `AWS S3` · `AWS Glue` · `AWS DMS` · `PySpark` · `Snowflake` · `Airflow` · `Lake Formation`
+**Stack:** `AWS S3` · `AWS Glue` · `AWS DMS` · `PySpark` · `Amazon Redshift` · `Airflow` · `Lake Formation`
 
 ---
 
@@ -57,7 +57,7 @@ Schema validation, null/uniqueness checks, business rule enforcement, and source
 
 > *Query tuning and cost optimization at analytics scale*
 
-Clustering keys for partition pruning, materialized views, result caching, warehouse right-sizing with cost analysis from production workloads.
+Clustering keys for partition pruning, materialized views, result caching, and warehouse right-sizing with cost-aware tuning. Self-directed practice applying the same tuning discipline used on Redshift at Amazon.
 
 **Stack:** `Snowflake` · `SQL`
 
@@ -115,12 +115,12 @@ Built to understand how ML teams consume data at inference time — the part tha
 
 ## Skills
 
-**Core (Production):** Python · PySpark · SQL · Apache Spark · Kafka · dbt · Airflow · AWS Glue · Databricks  
+**Core (Production):** Python · PySpark · SQL · Apache Spark · dbt · Airflow · AWS Glue · Databricks  
 **Cloud:** AWS (S3, Glue, DMS, Redshift, EMR, Lambda, EventBridge, IAM) · Azure Databricks  
 **Databases:** Snowflake · PostgreSQL · Redis  
 **DevOps:** Docker · Terraform · CI/CD (GitHub Actions)  
 **Data Governance:** HIPAA-aligned design · PHI masking · Schema contracts · Audit logging  
-**Exploring:** OpenAI API · LangChain · RAG · Vector Databases (pgvector, Pinecone) · LLM Evaluation
+**Exploring:** OpenAI API · LangChain · RAG · pgvector · LLM Evaluation
 
 ---
 
@@ -155,10 +155,9 @@ data-engineer-portfolio/
 - 🏆 Azure Databricks Platform Architect — Databricks · Sep 2025
 
 **Data Engineering**
+- 🏆 Microsoft Certified: Fabric Data Engineer Associate (DP-700) — Microsoft · Jun 2026 · *expires Jun 2027*
 - ✅ dbt Fundamentals — dbt Labs · Oct 2025
 
-**AI / LLM**
-- ✅ Building RAG Agents with LLMs — NVIDIA DLI · 2024
-- ✅ Generative AI with Diffusion Models — NVIDIA DLI · 2024
-- ✅ LangChain for LLM Application Development — DeepLearning.AI · 2024
-- ✅ Building Systems with the ChatGPT API — DeepLearning.AI · 2024
+**AI / GenAI Foundations**
+- ✅ AI for All: From Basics to GenAI Practice — NVIDIA · Jan 2026
+- ✅ AI For Everyone — DeepLearning.AI · Oct 2025

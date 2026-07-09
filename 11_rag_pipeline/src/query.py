@@ -10,17 +10,18 @@ from openai import OpenAI
 import psycopg2
 from pgvector.psycopg2 import register_vector
 
-from ingest import IngestConfig, EmbeddingGenerator
+from ingest import IngestConfig, EmbeddingGenerator, _validate_identifier
 
 log = logging.getLogger(__name__)
 
 
 @dataclass
 class RetrievalConfig:
-    top_k: int = 5                    # candidates from vector search
-    rerank_top_n: int = 3             # after reranking, keep top N
+    top_k: int = 5                    # final chunks returned when reranking is off
+    rerank_candidates: int = 20       # candidates pulled from vector search when reranking is on
+    rerank_top_n: int = 5             # after reranking, keep top N
     similarity_threshold: float = 0.3 # discard chunks below this cosine score
-    use_reranker: bool = False         # cross-encoder reranking (improves precision)
+    use_reranker: bool = False        # lexical (zero-cost) reranking over a wider candidate set
     chat_model: str = "gpt-4o-mini"
     max_context_tokens: int = 3000
     temperature: float = 0.0          # deterministic answers for enterprise use
@@ -28,17 +29,20 @@ class RetrievalConfig:
 
 class Retriever:
     """
-    Vector similarity search with optional reranking.
+    Vector similarity search with optional lexical reranking.
 
     Reranking tradeoff:
-      Without: fast, single-model, good for P50 queries
-      With:    adds ~100-200ms, cross-encoder scores full query-chunk pairs
-               significantly improves precision for ambiguous queries
-              Use when accuracy > latency (e.g. medical, legal, compliance)
+      Without: single-stage top-k vector search. Fast, good for most queries.
+      With:    pulls a wider candidate set (rerank_candidates) from vector search,
+               then rescoring by lexical term overlap against the query — no extra
+               model call, adds negligible latency, improves precision when the
+               query has specific terms the embedding alone under-weights.
+               Use when accuracy > raw latency (e.g. medical, legal, compliance).
     """
 
     def __init__(self, ingest_config: IngestConfig, retrieval_config: RetrievalConfig = None):
         self.ic = ingest_config
+        _validate_identifier(ingest_config.table_name)
         self.rc = retrieval_config or RetrievalConfig()
         self.conn = psycopg2.connect(ingest_config.db_conn_str)
         register_vector(self.conn)
@@ -47,16 +51,24 @@ class Retriever:
     def search(self, query: str, doc_ids: list[str] = None) -> list[dict]:
         """
         Semantic search. Optionally filter to specific documents.
-        Returns chunks sorted by cosine similarity (descending).
+
+        When rc.use_reranker is False (default): single-stage vector search,
+        returns top rc.top_k chunks by cosine similarity.
+
+        When True: pulls rc.rerank_candidates chunks from vector search, then
+        rescoring by lexical term overlap against the query, returns the top
+        rc.rerank_top_n by that combined ranking.
         """
         t0 = time.time()
         query_embedding = self.embedder.embed_batch([query])[0]
+        fetch_n = self.rc.rerank_candidates if self.rc.use_reranker else self.rc.top_k
 
         doc_filter = ""
-        params = [query_embedding, self.rc.top_k]
+        params = [query_embedding, query_embedding, self.rc.similarity_threshold]
         if doc_ids:
             doc_filter = "AND doc_id = ANY(%s)"
             params.append(doc_ids)
+        params.extend([query_embedding, fetch_n])
 
         with self.conn.cursor() as cur:
             cur.execute(f"""
@@ -64,11 +76,11 @@ class Retriever:
                     chunk_id, doc_id, chunk_index, text, token_count, metadata,
                     1 - (embedding <=> %s::vector) AS similarity
                 FROM {self.ic.table_name}
-                WHERE 1 - (embedding <=> %s::vector) >= {self.rc.similarity_threshold}
+                WHERE 1 - (embedding <=> %s::vector) >= %s
                 {doc_filter}
                 ORDER BY embedding <=> %s::vector
                 LIMIT %s;
-            """, [query_embedding, query_embedding] + ([doc_ids] if doc_ids else []) + [self.rc.top_k])
+            """, params)
 
             rows = cur.fetchall()
 
@@ -78,9 +90,44 @@ class Retriever:
             "similarity": round(float(r[6]), 4),
         } for r in rows]
 
+        if self.rc.use_reranker and results:
+            results = self._lexical_rerank(query, results, self.rc.rerank_top_n)
+
         log.info(f"search hits={len(results)} latency={int((time.time()-t0)*1000)}ms "
                  f"query_cost=${self.embedder.cost_usd:.5f}")
         return results
+
+    @staticmethod
+    def _lexical_rerank(query: str, candidates: list[dict], top_n: int) -> list[dict]:
+        """
+        Zero-cost lexical reranker: rescore vector-search candidates by term
+        overlap with the query, blended with the original cosine similarity.
+
+        This is intentionally simple (no external model call) — it corrects
+        cases where the embedding buries a chunk that shares the query's
+        specific terms (a code, a name, a section number) under semantically
+        similar-but-less-relevant chunks.
+        """
+        query_terms = Retriever._tokenize(query)
+        if not query_terms:
+            return candidates[:top_n]
+
+        rescored = []
+        for c in candidates:
+            chunk_terms = Retriever._tokenize(c["text"])
+            overlap = len(query_terms & chunk_terms)
+            lexical_score = overlap / len(query_terms)
+            # Blend: cosine similarity still dominates, lexical overlap breaks
+            # ties and corrects for embedding blind spots on specific terms.
+            combined = 0.7 * c["similarity"] + 0.3 * lexical_score
+            rescored.append({**c, "lexical_score": round(lexical_score, 4), "combined_score": round(combined, 4)})
+
+        rescored.sort(key=lambda c: c["combined_score"], reverse=True)
+        return rescored[:top_n]
+
+    @staticmethod
+    def _tokenize(text: str) -> set[str]:
+        return {t for t in "".join(ch.lower() if ch.isalnum() else " " for ch in text).split() if len(t) > 2}
 
 
 class RAGQueryEngine:

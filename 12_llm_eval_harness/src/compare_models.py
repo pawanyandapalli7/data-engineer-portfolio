@@ -2,7 +2,8 @@
 Model Comparison — run the same eval suite across multiple models
 and produce a side-by-side comparison report.
 
-This is exactly what Mool AI's Experimentation Engine does at enterprise scale.
+Surfaces the cost/quality/latency tradeoffs between model choices so a
+model-selection decision is backed by data instead of intuition.
 """
 
 import json

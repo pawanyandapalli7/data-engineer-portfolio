@@ -2,8 +2,9 @@
 LLM Eval Harness — Core Evaluator
 Measures: faithfulness, relevance, hallucination rate, latency, cost-per-query
 
-This is what OpenAI FDEs build when a customer says "the model isn't good enough."
-You build evals, quantify failure modes, and bring data back to the research team.
+Built to diagnose LLM deployment regressions: quantify failure modes with
+data (faithfulness, hallucination, latency, cost) rather than relying on
+spot-checking outputs by hand.
 """
 
 import json

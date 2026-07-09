@@ -15,7 +15,7 @@ This feature store solves that with two rules:
 1. **One pipeline, two outputs** — the same feature computation writes to Redis (serving) and Snowflake (training). The features are always identical.
 2. **Point-in-time correctness** — offline SQL uses `event_timestamp <= label_timestamp` to prevent future data leakage during training.
 
-This architecture mirrors what Uber (Michelangelo), Airbnb (Zipline), and Spotify use at scale.
+This implements the standard online/offline feature store pattern used for fraud-detection and risk-scoring systems, where both inference-time latency and point-in-time training correctness are required.
 
 ---
 
@@ -68,15 +68,17 @@ This architecture mirrors what Uber (Michelangelo), Airbnb (Zipline), and Spotif
 
 ---
 
-## Performance
+## Performance Targets
 
-| Metric | Value |
+| Metric | Target |
 |---|---|
-| Single entity read (p50) | 2ms |
-| Single entity read (p99) | 8ms |
-| Batch (100 entities, 1 round-trip) | 6ms |
+| Single entity read (p50) | ~2ms |
+| Single entity read (p99) | <10ms |
+| Batch (100 entities, 1 round-trip) | ~6ms |
 | Offline feature refresh | Every 6 hours via Airflow |
 | Feature TTL | 1 hour (configurable) |
+
+*These are the design targets Redis's single-digit-ms read latency and pipelined batch reads are built for, not measured production benchmarks — this is a self-directed project, not a deployed system under real load.*
 
 ---
 
@@ -101,16 +103,19 @@ This architecture mirrors what Uber (Michelangelo), Airbnb (Zipline), and Spotif
 ├── src/
 │   ├── ingestion/
 │   │   └── consumer.py          # Kafka → feature computation → Redis + Snowflake
-│   ├── serving/
-│   │   └── api.py               # FastAPI: single + batch feature serving
-│   └── offline/
-│       └── feature_sql.py       # dbt SQL + Airflow DAG for offline features
+│   └── serving/
+│       └── api.py               # FastAPI: single + batch feature serving
 ├── tests/
-│   └── test_feature_store.py    # Unit tests (mocked Redis — no infra required)
+│   └── test_feature_store.py    # Unit tests (mocked Redis/Snowflake — no infra required)
 ├── infra/
 │   └── docker-compose.yml       # Kafka + Zookeeper + Redis + Feature API
 └── requirements.txt
 ```
+
+> Offline feature computation (dbt models + Airflow DAG referenced above) is
+> described at the design level in this README but not yet implemented in
+> code — the online path (`consumer.py`, `api.py`) is what's actually built
+> and tested.
 
 ---
 

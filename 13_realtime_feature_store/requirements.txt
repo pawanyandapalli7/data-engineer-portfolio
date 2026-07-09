@@ -1,5 +1,8 @@
+# Minimum versions below. For a fully reproducible install, use: pip install -r requirements-lock.txt
+
 kafka-python>=2.0.2
 redis>=5.0.0
+snowflake-connector-python>=3.10.0
 fastapi>=0.111.0
 uvicorn>=0.29.0
 pydantic>=2.7.0

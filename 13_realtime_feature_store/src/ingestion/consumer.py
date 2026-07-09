@@ -6,8 +6,9 @@ Two-tier architecture:
   Online store  (Redis)     → low-latency serving (<5ms) for real-time ML inference
   Offline store (Snowflake) → historical features for model training and backfill
 
-This mirrors production feature stores at Uber (Michelangelo), Airbnb (Zipline),
-and Spotify — a common system design interview question at FAANG.
+This implements the common online/offline feature store pattern used for
+fraud detection and risk-scoring systems where inference-time latency and
+point-in-time training correctness are both required.
 """
 
 import json

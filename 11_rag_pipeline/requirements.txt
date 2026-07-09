@@ -1,3 +1,5 @@
+# Minimum versions below. For a fully reproducible install, use: pip install -r requirements-lock.txt
+
 openai>=1.30.0
 pgvector>=0.2.5
 psycopg2-binary>=2.9.9

@@ -16,7 +16,7 @@ Shipping an LLM to production without evals is guesswork. This harness answers f
 3. **What does quality cost?** (cost-per-query at scale)
 4. **Is the difference between Model A and Model B worth the price?** (comparison report)
 
-This is the same type of work OpenAI's Forward Deployed Engineering team does when a customer deployment underperforms. Build evals, quantify failure modes, bring data back to the team.
+This kind of harness is what turns a deployment decision from a gut call into something backed by data — quantify the failure modes, compare models on the same eval set, and let the numbers make the call.
 
 ---
 

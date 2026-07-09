@@ -3,7 +3,7 @@ name: Data Engineer CI
 on: [push, pull_request]
 
 jobs:
-  test:
+  test-python-fundamentals:
     runs-on: ubuntu-latest
 
     steps:
@@ -21,3 +21,91 @@ jobs:
       - name: Run tests
         run: |
           pytest 02_python/tests
+
+  test-rag-pipeline:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: "3.12"
+
+      - name: Install dependencies
+        run: |
+          pip install -r 11_rag_pipeline/requirements.txt
+
+      - name: Run tests
+        working-directory: 11_rag_pipeline
+        env:
+          PYTHONPATH: src
+        run: |
+          pytest tests
+
+  test-cdc-pipeline:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: "3.12"
+
+      - name: Install dependencies
+        run: |
+          pip install pytest pyspark
+
+      - name: Run tests
+        working-directory: 05_end_to_end_projects/cdc_pipeline
+        env:
+          PYTHONPATH: .
+        run: |
+          pytest tests -v
+
+  test-eval-harness:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: "3.12"
+
+      - name: Install dependencies
+        run: |
+          pip install -r 12_llm_eval_harness/requirements.txt
+
+      - name: Run tests
+        working-directory: 12_llm_eval_harness
+        env:
+          PYTHONPATH: src
+        run: |
+          pytest tests -v
+
+  test-feature-store:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: "3.12"
+
+      - name: Install dependencies
+        run: |
+          pip install -r 13_realtime_feature_store/requirements.txt
+
+      - name: Run tests
+        working-directory: 13_realtime_feature_store
+        env:
+          PYTHONPATH: src
+        run: |
+          pytest tests -v
