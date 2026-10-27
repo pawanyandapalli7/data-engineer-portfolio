@@ -1,0 +1,34 @@
+# Metadata that drives every layer. Adding a source = adding an entry here.
+# Columns follow the Synthea CSV export (synthetic patients — no real PHI).
+sources:
+  patients:
+    file: patients.csv
+    key: [Id]
+    columns: [Id, BIRTHDATE, DEATHDATE, GENDER, STATE, COUNTY, ZIP]
+    types: {BIRTHDATE: date, DEATHDATE: date}
+    rename: {Id: patient_id, BIRTHDATE: birth_date, DEATHDATE: death_date, GENDER: gender, STATE: state, COUNTY: county, ZIP: zip}
+    expectations:
+      - {name: patient_id_present, rule: "patient_id IS NOT NULL"}
+      - {name: birth_date_valid, rule: "birth_date IS NOT NULL AND birth_date <= current_date()"}
+      - {name: gender_known, rule: "gender IN ('M','F')"}
+  claims:
+    file: claims.csv
+    key: [Id]
+    columns: [Id, PATIENTID, PROVIDERID, PRIMARYPATIENTINSURANCEID, SERVICEDATE, STATUS1, OUTSTANDING1, DIAGNOSIS1]
+    types: {SERVICEDATE: timestamp, OUTSTANDING1: "decimal(12,2)"}
+    rename: {Id: claim_id, PATIENTID: patient_id, PROVIDERID: provider_id, PRIMARYPATIENTINSURANCEID: payer_id, SERVICEDATE: service_ts, STATUS1: status, OUTSTANDING1: outstanding, DIAGNOSIS1: primary_diagnosis}
+    expectations:
+      - {name: claim_id_present, rule: "claim_id IS NOT NULL"}
+      - {name: patient_linked, rule: "patient_id IS NOT NULL"}
+      - {name: service_date_present, rule: "service_ts IS NOT NULL"}
+      - {name: outstanding_not_negative, rule: "outstanding IS NULL OR outstanding >= 0"}
+  claim_transactions:
+    file: claims_transactions.csv
+    key: [ID]
+    columns: [ID, CLAIMID, PATIENTID, TYPE, AMOUNT, FROMDATE, PROCEDURECODE]
+    types: {AMOUNT: "decimal(12,2)", FROMDATE: timestamp}
+    rename: {ID: transaction_id, CLAIMID: claim_id, PATIENTID: patient_id, TYPE: txn_type, AMOUNT: amount, FROMDATE: from_ts, PROCEDURECODE: procedure_code}
+    expectations:
+      - {name: transaction_id_present, rule: "transaction_id IS NOT NULL"}
+      - {name: claim_linked, rule: "claim_id IS NOT NULL"}
+      - {name: known_type, rule: "txn_type IN ('CHARGE','PAYMENT','ADJUSTMENT','TRANSFERIN','TRANSFEROUT')"}

@@ -1,0 +1,53 @@
+# Databricks Asset Bundle — deploys the job that runs bronze → silver → gold.
+#   databricks bundle deploy -t dev --var="landing=abfss://landing@<account>.dfs.core.windows.net/synthea"
+#   databricks bundle run lakehouse_pipeline -t dev
+bundle:
+  name: azure_lakehouse
+
+variables:
+  catalog:
+    description: Unity Catalog catalog created by infra/databricks
+    default: lakehouse_demo
+  landing:
+    description: Folder holding the Synthea CSVs (abfss://landing@<account>.dfs.core.windows.net/synthea)
+
+resources:
+  jobs:
+    lakehouse_pipeline:
+      name: lakehouse-bronze-silver-gold
+      email_notifications:
+        on_failure:
+          - ${workspace.current_user.userName}
+      job_clusters:
+        - job_cluster_key: small
+          new_cluster:
+            spark_version: 15.4.x-scala2.12
+            node_type_id: Standard_D4ds_v5
+            num_workers: 1
+            data_security_mode: SINGLE_USER
+            custom_tags:
+              project: azure-lakehouse-demo
+      tasks:
+        - task_key: bronze
+          job_cluster_key: small
+          spark_python_task:
+            python_file: ./jobs/run.py
+            parameters: ["--layer", "bronze", "--catalog", "${var.catalog}", "--landing", "${var.landing}",
+                         "--conf", "${workspace.file_path}/conf/sources.yml"]
+        - task_key: silver
+          depends_on: [{task_key: bronze}]
+          job_cluster_key: small
+          spark_python_task:
+            python_file: ./jobs/run.py
+            parameters: ["--layer", "silver", "--catalog", "${var.catalog}", "--conf", "${workspace.file_path}/conf/sources.yml"]
+        - task_key: gold
+          depends_on: [{task_key: silver}]
+          job_cluster_key: small
+          spark_python_task:
+            python_file: ./jobs/run.py
+            parameters: ["--layer", "gold", "--catalog", "${var.catalog}", "--conf", "${workspace.file_path}/conf/sources.yml"]
+
+targets:
+  dev:
+    mode: development
+    default: true
