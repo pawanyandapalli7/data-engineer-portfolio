@@ -1,0 +1,8 @@
+mlflow==3.4.0
+sqlalchemy>=2.0,<2.1   # mlflow 3.4 imports a pool class removed in SQLAlchemy 2.1
+scikit-learn>=1.5
+pandas>=2.2
+fastapi>=0.111
+uvicorn>=0.30
+httpx>=0.27
+pytest>=8

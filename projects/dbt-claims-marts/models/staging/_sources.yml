@@ -1,0 +1,11 @@
+version: 2
+
+sources:
+  - name: synthea
+    description: Synthetic patient, claim and claim-transaction CSVs (no real PHI).
+    meta:
+      external_location: "read_csv('{{ var('synthea_dir') }}/{name}.csv', header = true, all_varchar = true)"
+    tables:
+      - name: patients
+      - name: claims
+      - name: claims_transactions

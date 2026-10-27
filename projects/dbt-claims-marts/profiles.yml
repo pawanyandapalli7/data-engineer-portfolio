@@ -1,0 +1,7 @@
+claims_marts:
+  target: dev
+  outputs:
+    dev:
+      type: duckdb
+      path: target/claims.duckdb
+      threads: 4

@@ -1,0 +1,18 @@
+# Train (one-shot), then serve the champion from the same registry volume.
+#   docker compose run --rm train            # registers a version, promotes it if it wins
+#   docker compose up -d serve
+#   curl localhost:8080/health
+services:
+  train:
+    build: .
+    command: python -m claims_model.train --tracking-uri sqlite:////models/mlflow.db --kind logreg
+    volumes: [registry:/models]
+    profiles: [train]
+
+  serve:
+    build: .
+    ports: ["8080:8080"]
+    volumes: [registry:/models]
+
+volumes:
+  registry:

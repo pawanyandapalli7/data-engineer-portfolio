@@ -1,0 +1,57 @@
+version: 2
+
+models:
+  - name: claims_quarantine
+    description: Rows that failed a business rule, with the rules they failed.
+    columns:
+      - name: failed_checks
+        data_tests: [not_null]
+
+  - name: dim_patient
+    description: Patient dimension with SCD Type 2 history.
+    data_tests:
+      - dbt_utils_free_unique_combination:
+          arguments: {columns: [patient_id, valid_from]}
+
+  - name: fct_claim_lines
+    description: One row per claim transaction, for claims that passed every check.
+    config:
+      contract: {enforced: true}
+    columns:
+      - {name: transaction_id, data_type: varchar, constraints: [{type: not_null}], data_tests: [unique]}
+      - {name: claim_id, data_type: varchar, data_tests: [not_null]}
+      - name: patient_id
+        data_type: varchar
+        data_tests:
+          - relationships:
+              arguments: {to: ref('dim_patient'), field: patient_id}
+              config: {where: "patient_id is not null", severity: warn}
+      - {name: provider_id, data_type: varchar}
+      - {name: payer_id, data_type: varchar}
+      - {name: service_date, data_type: date, data_tests: [not_null]}
+      - {name: txn_type, data_type: varchar}
+      - name: amount
+        data_type: "decimal(12,2)"
+        data_tests: [non_negative]
+      - {name: procedure_code, data_type: varchar}
+      - {name: primary_diagnosis, data_type: varchar}
+
+  - name: claims_by_month
+    columns:
+      - name: month
+        data_tests: [unique, not_null]
+
+unit_tests:
+  - name: claims_by_month_sums_charges_and_payments_separately
+    model: claims_by_month
+    given:
+      - input: ref('fct_claim_lines')
+        rows:
+          - {transaction_id: t1, claim_id: c1, service_date: 2026-01-05, txn_type: CHARGE, amount: 120.00}
+          - {transaction_id: t2, claim_id: c1, service_date: 2026-01-05, txn_type: PAYMENT, amount: 100.00}
+          - {transaction_id: t3, claim_id: c2, service_date: 2026-01-20, txn_type: CHARGE, amount: 80.50}
+          - {transaction_id: t4, claim_id: c3, service_date: 2026-02-09, txn_type: CHARGE, amount: 10.00}
+    expect:
+      rows:
+        - {month: 2026-01-01, claims: 2, charged: 200.50, paid: 100.00}
+        - {month: 2026-02-01, claims: 1, charged: 10.00, paid: null}

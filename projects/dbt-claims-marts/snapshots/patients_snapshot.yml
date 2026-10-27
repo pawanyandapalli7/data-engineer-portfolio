@@ -1,0 +1,9 @@
+snapshots:
+  - name: patients_snapshot
+    relation: ref('stg_patients')
+    description: SCD Type 2 history of patient attributes (dbt check strategy).
+    config:
+      unique_key: patient_id
+      strategy: check
+      check_cols: [gender, state, county, zip, death_date]
+      dbt_valid_to_current: "cast('9999-12-31' as timestamp)"

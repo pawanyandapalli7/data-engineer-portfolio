@@ -1,0 +1,28 @@
+version: 2
+
+models:
+  - name: stg_patients
+    columns:
+      - name: patient_id
+        data_tests: [unique, not_null]
+      - name: gender
+        data_tests:
+          - accepted_values:
+              arguments: {values: ["M", "F"]}
+              config: {severity: warn}   # known bad rows; handled by claims_quarantine
+  - name: stg_claims
+    columns:
+      - name: claim_id
+        data_tests: [unique, not_null]
+      - name: patient_id
+        data_tests:
+          - relationships:
+              arguments: {to: ref('stg_patients'), field: patient_id}
+  - name: stg_claim_transactions
+    columns:
+      - name: transaction_id
+        data_tests: [unique, not_null]
+      - name: txn_type
+        data_tests:
+          - accepted_values:
+              arguments: {values: ["CHARGE", "PAYMENT", "ADJUSTMENT", "TRANSFERIN", "TRANSFEROUT"]}

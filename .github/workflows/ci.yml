@@ -1,0 +1,186 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+  schedule:
+    - cron: "0 6 * * 1"   # weekly, to catch dependency drift
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: { python-version: "3.12" }
+      - run: pip install ruff pytest
+      - run: ruff check .
+      - run: ruff format --check .
+      - run: python -m pytest -v scripts/tests
+
+  spark:
+    name: spark · ${{ matrix.key }}
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - { key: azure-lakehouse, dir: projects/azure-lakehouse }
+          - { key: cdc-pipeline, dir: projects/cdc-pipeline }
+          - { key: data-quality, dir: projects/data-quality }
+          - { key: patterns-spark, dir: patterns/spark }
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
+        with: { distribution: temurin, java-version: "17" }
+      - uses: actions/setup-python@v5
+        with: { python-version: "3.11", cache: pip }
+      - run: pip install -r ${{ matrix.dir }}/requirements-dev.txt
+      - working-directory: ${{ matrix.dir }}
+        env: { PYTHONPATH: . }
+        run: python -m pytest -v tests --junitxml=${{ github.workspace }}/results/junit-${{ matrix.key }}.xml
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: results-${{ matrix.key }}
+          path: results/
+
+  rag-pipeline:
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: pgvector/pgvector:pg16
+        env: { POSTGRES_PASSWORD: postgres }
+        ports: ["5432:5432"]
+        options: >-
+          --health-cmd "pg_isready -U postgres" --health-interval 5s --health-timeout 3s --health-retries 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: { python-version: "3.12", cache: pip }
+      - run: pip install -r projects/rag-pipeline/requirements.txt
+      - working-directory: projects/rag-pipeline
+        env:
+          PYTHONPATH: src
+          RAG_TEST_DATABASE_URL: postgresql://postgres:postgres@localhost:5432/postgres
+        run: python -m pytest -v tests --junitxml=${{ github.workspace }}/results/junit-rag-pipeline.xml
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with: { name: results-rag-pipeline, path: results/ }
+
+  python:
+    name: python · ${{ matrix.key }}
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - { key: mlops-claims-model, dir: projects/mlops-claims-model, req: requirements.txt, pythonpath: src }
+          - { key: llm-eval-harness, dir: projects/llm-eval-harness, req: requirements.txt, pythonpath: src }
+          - { key: feature-store, dir: projects/feature-store, req: requirements-dev.txt, pythonpath: src }
+          - { key: patterns-python, dir: patterns/python, req: requirements.txt, pythonpath: . }
+          - { key: patterns-sql, dir: patterns/sql, req: requirements.txt, pythonpath: . }
+          - { key: patterns-aws-glue-lambda, dir: patterns/aws-glue-lambda, req: requirements.txt, pythonpath: . }
+          - { key: patterns-airflow, dir: patterns/airflow, req: requirements.txt, pythonpath: . }
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: { python-version: "3.12", cache: pip }
+      - run: pip install -r ${{ matrix.dir }}/${{ matrix.req }}
+      - working-directory: ${{ matrix.dir }}
+        env:
+          PYTHONPATH: ${{ matrix.pythonpath }}
+          AIRFLOW_HOME: ${{ runner.temp }}/airflow
+        run: python -m pytest -v tests --junitxml=${{ github.workspace }}/results/junit-${{ matrix.key }}.xml
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: results-${{ matrix.key }}
+          path: results/
+
+  dbt:
+    runs-on: ubuntu-latest
+    defaults:
+      run: { working-directory: projects/dbt-claims-marts }
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: { python-version: "3.12", cache: pip }
+      - run: pip install -r requirements.txt
+      - run: dbt build --profiles-dir .
+      - run: mkdir -p ${{ github.workspace }}/results && cp target/run_results.json ${{ github.workspace }}/results/dbt-dbt-claims-marts.json
+        if: always()
+      - run: python -m pytest -v tests_py --junitxml=${{ github.workspace }}/results/junit-dbt-claims-marts.xml
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with: { name: results-dbt-claims-marts, path: results/ }
+
+  docker:
+    name: docker · ${{ matrix.dir }}
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        include:
+          - { dir: projects/rag-pipeline, compose: docker-compose.yml }
+          - { dir: projects/feature-store, compose: infra/docker-compose.yml }
+          - { dir: projects/mlops-claims-model, compose: docker-compose.yml }
+    steps:
+      - uses: actions/checkout@v4
+      - run: docker build -t check ${{ matrix.dir }}
+      - working-directory: ${{ matrix.dir }}
+        env: { OPENAI_API_KEY: placeholder-for-config-check }
+        run: docker compose -f ${{ matrix.compose }} config -q
+
+  terraform:
+    name: terraform · ${{ matrix.dir }}
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        dir: [projects/azure-lakehouse/infra/azure, projects/azure-lakehouse/infra/databricks, patterns/aws-glue-lambda/infra]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: hashicorp/setup-terraform@v3
+      - run: terraform fmt -check -recursive
+        working-directory: ${{ matrix.dir }}
+      - run: terraform init -backend=false -input=false
+        working-directory: ${{ matrix.dir }}
+      - run: terraform validate
+        working-directory: ${{ matrix.dir }}
+
+  # Publishes evidence.json, badges and a small page to GitHub Pages, so the
+  # README badges and pawanyandapalli.com show test counts that CI produced.
+  evidence:
+    needs: [spark, rag-pipeline, python, dbt]
+    if: always() && github.event_name != 'pull_request' && github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    permissions:
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+      url: ${{ steps.deploy.outputs.page_url }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: { python-version: "3.12" }
+      - uses: actions/download-artifact@v4
+        with: { pattern: results-*, path: results, merge-multiple: true }
+      - run: >
+          python scripts/evidence.py --results results --out site
+          --commit ${{ github.sha }}
+          --run-url ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+      - uses: actions/configure-pages@v5
+      - uses: actions/upload-pages-artifact@v3
+        with: { path: site }
+      - id: deploy
+        uses: actions/deploy-pages@v4

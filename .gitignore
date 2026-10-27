@@ -205,3 +205,30 @@ cython_debug/
 marimo/_static/
 marimo/_lsp/
 __marimo__/
+
+# dbt
+projects/dbt-claims-marts/target/
+projects/dbt-claims-marts/logs/
+projects/dbt-claims-marts/dbt_packages/
+
+# MLflow local stores
+mlflow.db
+mlruns/
+mlartifacts/
+projects/mlops-claims-model/reports/
+
+# Terraform: state holds secrets, tfvars holds your subscription id
+**/.terraform/
+*.tfstate
+*.tfstate.*
+*.tfvars
+!**/example.tfvars
+.terraform.lock.hcl.bak
+crash.log
+
+# Databricks bundle working files
+**/.databricks/
+
+# Local envs and keys
+.venv/
+.env
